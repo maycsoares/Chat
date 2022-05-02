@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- LOCAL DO CHAT -->
+    <div id="container">
+        <div id="input">
+            <div class="input">
+                <label for="" >Origem: </label><input type="text" id="origem"> 
+            </div>
+            <div class="input">
+                <label for="" >Destino:</label><input type="text" id="destino">
+            </div>
+        </div>
+        <div id="textView"></div> 
+        <div id="envio">
+            <textarea name="mensagem" id="mensagem" placeholder="Mensagem" rows="6" cols="50" value="" ></textarea>
+            <button id="botao" type="submit" onclick="chat()" >Enviar</button>
+        </div>               
+    </div>       
+    <script>
+        
+        
+        var inputOrigem = document.getElementById("origem") 
+        var inputDestino = document.getElementById("destino")
+        var inputMsg = document.getElementById("mensagem")
+        
+        
+        function chat () {
+            var obj = { 
+                    origem: inputOrigem.value,
+                    destino: inputDestino.value,
+                    mensagem: inputMsg.value,
+                }
+            var xhr = new XMLHttpRequest();
+            // https://barth.com.br/ApiChatCliqx/chat/verificarMensagem.php?origem=${imputOrigem.value}&destino=${imputDestino.value};
+            xhr.open("POST", "https://barth.com.br/ApiChatCliqx/chat/inserirMensagem.php");
+            xhr.send(JSON.stringify(obj));
+            
+            xhr.onreadystatechange = function () {                
+                
+                console.log(xhr.readyState)
+                if (xhr.readyState === 4) {
+                    
+                    console.log(xhr.status)
+                    
+                    if (xhr.status === 201) {                       
+                        console.log(inputDestino.value , inputOrigem.value)
+                        console.log(xhr.status)
+                    }
+                }
+                
+            };  
+        }// fim pesquisa
+        function pesquisar () {
+            var xhr = new XMLHttpRequest();            
+            xhr.open("GET", `https://barth.com.br/ApiChatCliqx/chat/verificarMensagem.php?origem=${inputOrigem.value}&destino=${inputDestino.value}`);
+            xhr.send(null);
+            
+            
+            xhr.onreadystatechange = function () {
+                
+                console.log(xhr.readyState)
+                if (xhr.readyState === 4) {
+                    var msg = JSON.parse(xhr.responseText)
+                    
+                    console.log(xhr.status)
+                    if (xhr.status === 200) {
+                        document.getElementById("textView").innerHTML = ''
+                        for (let i = 0; i < msg.length ; i++) { 
+                            console.log(inputDestino.value , inputOrigem.value)
+                            console.log("ok")                            
+                            console.log(msg)
+                            
+
+                            var deup = document.createElement("li");
+                            var textinho = document.createTextNode(msg[i].mensagem);
+                            deup.appendChild(textinho)
+                            document.getElementById("textView").appendChild(deup)   
+    
+                        }
+                    }    
+                }
+            };  
+        }
+
+        setInterval(function(){
+             
+            pesquisar()
+            
+
+        },1000)
+    </script>    
+</body>
+</html>
